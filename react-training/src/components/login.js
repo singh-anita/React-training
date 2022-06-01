@@ -1,16 +1,29 @@
-import React from "react";
-import {
-  Button,
-  Form,
-  Col,
-  FormGroup,
-  FormControl,
-  InputGroup,
-  Container,
-  Row,
-} from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Form, Col, Container, Row } from "react-bootstrap";
 
 const Login = () => {
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+  });
+  // const [formErrors, setFormErrors] = useState({});
+  // const [disable, setDisable] = React.useState(false)
+
+  const handleChange = (e) => {
+    console.log(e.currentTarget.value)
+
+    setInput({
+      ...input,
+      [e.currentTarget.name]: e.currentTarget.value,
+    });
+  };
+
+
+  const submitHandler = e => {
+    e.preventDefault();
+    console.log(input);
+  }
+
   return (
     <>
       <Container>
@@ -21,44 +34,75 @@ const Login = () => {
             id="loginbox"
             style={{ marginTop: 50 }}
           >
-            <div className="panel panel-info">
-              <div className="panel-heading">
-                <div className="panel-title">Sign In</div>
+            <div className="login-form">
+              <div className="group-title" style={{ marginBottom: 30 }}>
+                <h2>Login</h2>
               </div>
-              <div style={{ paddingTop: 30 }} className="panel-body">
-                <Form horizontal>
-                  <FormGroup
-                    controlId="loginEmail"
+              <Form method="post" onSubmit={submitHandler}>
+                <Row>
+                  <Form.Group
+                    as={Col}
+                    lg="12"
+                    className="content"
+                    controlId="email"
                     style={{ marginBottom: 25 }}
                   >
-                    <Col md={12}>
-                      <InputGroup>
-                        <FormControl type="text" placeholder="Enter Email" />
-                      </InputGroup>
-                    </Col>
-                  </FormGroup>
-                  <FormGroup
-                    controlId="loginPassword"
+                    <Form.Label>
+                      Enter Email
+                      <sup>*</sup>
+                    </Form.Label>
+
+                    <Form.Control
+                      name="email"
+                      required
+                      type="text"
+                      placeholder="Email"
+                      value={input?.email}
+                      onChange={(e) => handleChange(e)}
+                    />
+                    {/* {formErrors.email && (
+                      <Form.Control.Feedback type="invalid">
+                        {formErrors.email}
+                      </Form.Control.Feedback>
+                    )} */}
+                  </Form.Group>
+                  <Form.Group
+                    as={Col}
+                    lg="12"
+                    className="content mb-20"
+                    controlId="password"
                     style={{ marginBottom: 25 }}
                   >
-                    <Col md={12}>
-                      <InputGroup>
-                        <FormControl
-                          type="password"
-                          placeholder="Enter Password"
-                        />
-                      </InputGroup>
-                    </Col>
-                  </FormGroup>
-                  <FormGroup style={{ marginTop: 10 }}>
-                    <Col sm={12} md={12}>
-                      <Button id="btn-login" bsStyle="success">
-                        Login
-                      </Button>
-                    </Col>
-                  </FormGroup>
-                </Form>
-              </div>
+                    <Form.Label>
+                      Enter Password
+                      <sup>*</sup>
+                    </Form.Label>
+
+                    <Form.Control
+                      name="password"
+                      required
+                      type="password"
+                      placeholder="Password"
+                      value={input?.password}
+                      onChange={(e) => handleChange(e)}
+                    />
+                    {/* {formErrors.password && (
+                      <Form.Control.Feedback type="invalid">
+                        {formErrors.password}
+                      </Form.Control.Feedback>
+                    )} */}
+                  </Form.Group>
+                </Row>
+                <Button
+                  type="submit"
+                  id="btn-login"
+                  bsStyle="success"
+                  style={{ marginTop: 10 }}
+                  // disabled={disable}
+                >
+                  Login
+                </Button>
+              </Form>
             </div>
           </Col>
         </Row>
