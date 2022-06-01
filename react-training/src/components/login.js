@@ -1,13 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Col, Container, Row } from "react-bootstrap";
 
-const Login = () => {
+const Login = (props) => {
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
   // const [formErrors, setFormErrors] = useState({});
   // const [disable, setDisable] = React.useState(false)
+
+  const [formIsValid, setFormIsValid] = useState(false);
+
+  useEffect(()=>{
+    const checker = setTimeout(() =>{
+      setFormIsValid(
+        input.email.includes('@') && input.password.trim().length > 6
+      );
+    })
+    
+    return () =>{
+      console.log('hi')
+      clearTimeout(checker)
+    }
+
+  }, [input])
 
   const handleChange = (e) => {
     console.log(e.currentTarget.value)
@@ -98,7 +114,7 @@ const Login = () => {
                   id="btn-login"
                   bsStyle="success"
                   style={{ marginTop: 10 }}
-                  // disabled={disable}
+                  disabled={!formIsValid}
                 >
                   Login
                 </Button>
