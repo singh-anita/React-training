@@ -2,43 +2,95 @@ import React, { useState, useEffect } from "react";
 import { Button, Form, Col, Container, Row } from "react-bootstrap";
 
 const Login = (props) => {
+  const { isUserLogin, setIsUserLogin } = props;
+  console.log(isUserLogin);
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
-  // const [formErrors, setFormErrors] = useState({});
-  // const [disable, setDisable] = React.useState(false)
+  // const [showMessage, setShowMessage] = useState(false)
+  const [formErrors, setFormErrors] = useState({});
+  // const [disable, setDisable] = useState(false)
 
-  const [formIsValid, setFormIsValid] = useState(false);
+  // const [formIsValid, setFormIsValid] = useState(false);
 
-  useEffect(()=>{
-    const checker = setTimeout(() =>{
-      setFormIsValid(
-        input.email.includes('@') && input.password.trim().length > 6
-      );
-    })
-    
-    return () =>{
-      console.log('hi')
-      clearTimeout(checker)
-    }
+  // useEffect(() => {
+  //   const checker = setTimeout(() => {
+  //     setFormIsValid(
+  //       input.email.includes("@") && input.password.trim().length > 6
+  //     );
+  //   });
 
-  }, [input])
+  //   return () => {
+  //     console.log("hi");
+  //     clearTimeout(checker);
+  //   };
+  // }, [input]);
+
+  // useEffect(() => {
+  //   setShowMessage(false)
+  // }, [])
 
   const handleChange = (e) => {
-    console.log(e.currentTarget.value)
+    console.log(e.currentTarget.value);
 
     setInput({
       ...input,
       [e.currentTarget.name]: e.currentTarget.value,
     });
+    // console.log(formErrors[e.currentTarget.name])
+    // if ( !!formErrors[e.currentTarget.name] ) setFormErrors({
+    //   ...formErrors,
+    //   [e.currentTarget.name]: null
+    // })
   };
 
+  const findFormErrors = () => {
+    const errors = {};
+    const mailFormat =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const submitHandler = e => {
+    // email field
+    if (!input?.email || input?.email === "") {
+      errors.email = "Email address is required";
+    } else if (!input?.email.match(mailFormat) || input?.email.length > 35) {
+      errors.email = "Email address is invalid";
+    }
+
+    // password field
+    if (!input?.password || input?.password === "") {
+      errors.password = "Password is required";
+    } else if (input?.password.trim().length < 8)
+      errors.password = "Password should be greater than 8";
+      
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length === 0) {
+      return true;
+    }
+    return errors;
+  };
+
+  const submitHandler = (e) => {
     e.preventDefault();
     console.log(input);
-  }
+    // console.log(isUserLogin);
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (findFormErrors(input)) {
+      console.log(input);
+      setIsUserLogin(!isUserLogin)
+      setInput({ email: '', password: '' })
+    }
+    // else {
+    //   // setShowMessage(true)
+    //   // setDisable(true)
+    // }
+  };
 
   return (
     <>
@@ -54,7 +106,7 @@ const Login = (props) => {
               <div className="group-title" style={{ marginBottom: 30 }}>
                 <h2>Login</h2>
               </div>
-              <Form method="post" onSubmit={submitHandler}>
+              <Form noValidate method="post" onSubmit={submitHandler}>
                 <Row>
                   <Form.Group
                     as={Col}
@@ -75,12 +127,13 @@ const Login = (props) => {
                       placeholder="Email"
                       value={input?.email}
                       onChange={(e) => handleChange(e)}
+                      isInvalid={!!formErrors.email}
                     />
-                    {/* {formErrors.email && (
+                    {formErrors.email && (
                       <Form.Control.Feedback type="invalid">
                         {formErrors.email}
                       </Form.Control.Feedback>
-                    )} */}
+                    )}
                   </Form.Group>
                   <Form.Group
                     as={Col}
@@ -101,12 +154,13 @@ const Login = (props) => {
                       placeholder="Password"
                       value={input?.password}
                       onChange={(e) => handleChange(e)}
+                      isInvalid={!!formErrors.password}
                     />
-                    {/* {formErrors.password && (
+                    {formErrors.password && (
                       <Form.Control.Feedback type="invalid">
                         {formErrors.password}
                       </Form.Control.Feedback>
-                    )} */}
+                    )}
                   </Form.Group>
                 </Row>
                 <Button
@@ -114,9 +168,10 @@ const Login = (props) => {
                   id="btn-login"
                   bsStyle="success"
                   style={{ marginTop: 10 }}
-                  disabled={!formIsValid}
+                  // disabled={disable}
+                  // disabled={!formIsValid}
                 >
-                  Login
+                  {isUserLogin ? "Logout" : "Login"}
                 </Button>
               </Form>
             </div>
